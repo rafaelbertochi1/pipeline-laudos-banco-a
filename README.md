@@ -1,5 +1,7 @@
 # pipeline-laudos-banco-a
 
+[![Testes](https://github.com/rafaelbertochi1/pipeline-laudos-banco-a/actions/workflows/testes.yml/badge.svg)](https://github.com/rafaelbertochi1/pipeline-laudos-banco-a/actions/workflows/testes.yml)
+
 > **Sobre este repositório.** Versão de portfólio de um projeto real, desenvolvido em
 > ambiente corporativo em 2026. Os nomes da empresa, dos sistemas e dos bancos, as URLs
 > e os dados de exemplo foram trocados por nomes genéricos ("Central de Gestão",
@@ -77,6 +79,17 @@ de `logs/` correspondente e, se der, 1 ou 2 PDFs citados.
 | `checar_qualidade_dados.sql` | As consultas de qualidade (lidas pelo script acima), pra quem preferir rodar direto no Postgres via Adminer. |
 | `subir_banco.bat` | Atalho Windows (2 cliques): abre o Docker Desktop se precisar, espera ficar pronto e sobe o Postgres + Adminer. Se achar a pasta do pipeline-laudos-banco-b na máquina (ao lado desta ou em `Documents\GitHub`), usa o `docker-compose.yml` de lá; senão usa o desta pasta, com o mesmo nome de projeto, pra os dois repositórios sempre apontarem pro mesmo banco. |
 | `docker-compose.yml` | Postgres 15 + Adminer, cópia do do pipeline-laudos-banco-b (mesmos containers `postgres_pdf`/`adminer_pdf`, mesmas credenciais). Só é usado quando o pipeline-laudos-banco-b não está na máquina. |
+
+## Testes
+
+Os testes automatizados (pasta `tests/`) cobrem a parte que decide o que entra no banco e o que é baixado: a leitura de cada campo do PDF pela coluna da tabela do laudo, a conversão de números, datas e coordenadas digitadas à mão (`banco_a_extractor.py`), a validação do lote antes de gravar (`checagens.py` e `validar_lote`), a divisão do período em lotes e abas, o código do App Autenticador e a escolha do PDF certo entre os laudos da API (`banco_a_downloader.py`), a classificação das fotos pela legenda (`banco_a_imagens.py`) e o relatório de qualidade. Cada caso vem de um formato que já apareceu nos laudos - por exemplo, "Sala Comercial" gravado só como "Sala".
+
+```powershell
+pip install -r requirements.txt pytest
+pytest
+```
+
+Não precisam de banco, internet, navegador nem PDFs reais: o pdfplumber e a API da Plataforma são trocados por versões falsas, e a suíte roda em menos de um segundo. O GitHub Actions roda a mesma suíte a cada push (selo no topo deste README).
 
 ## O que NÃO é gravado nem versionado
 
